@@ -1,7 +1,8 @@
-package de.mfhost.raidorganizerserver.security;
+package de.mfhost.raidorganizerserver.config;
 
+import de.mfhost.raidorganizerserver.security.JwtTokenFilter;
 import de.mfhost.raidorganizerserver.user.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,13 +18,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.servlet.http.HttpServletResponse;
+
 import static java.lang.String.format;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepo;
-    private final JwtTokenFilter  jwtTokenFilter;
+    private final JwtTokenFilter jwtTokenFilter;
 
     public SecurityConfig(UserRepository userRepo, JwtTokenFilter jwtTokenFilter) {
         this.userRepo = userRepo;
@@ -62,6 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/public/**").permitAll()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/register").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
