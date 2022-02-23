@@ -15,4 +15,5 @@ spring:
 
 jwt:
     secret: "zdtasdasd4324s(/&/sd"
-    expiration: 604800000
+    expiration: 3600000
+    refreshExpiration: 604800000

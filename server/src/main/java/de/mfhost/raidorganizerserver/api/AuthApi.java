@@ -1,9 +1,10 @@
 package de.mfhost.raidorganizerserver.api;
 
+import de.mfhost.raidorganizerserver.Exception.TokenRefreshException;
 import de.mfhost.raidorganizerserver.dto.AuthRequest;
 import de.mfhost.raidorganizerserver.dto.AuthResponse;
 import de.mfhost.raidorganizerserver.dto.CreateUserRequest;
-import de.mfhost.raidorganizerserver.security.JwtTokenUtils;
+import de.mfhost.raidorganizerserver.security.*;
 import de.mfhost.raidorganizerserver.user.User;
 import de.mfhost.raidorganizerserver.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,13 @@ import javax.xml.bind.ValidationException;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthApi {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtils jwtTokenUtils;
     private final UserService userService;
-
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping(value = "/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) { try {
@@ -42,7 +44,12 @@ public class AuthApi {
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, jwtTokenUtils.generateAccessToken(user))
-                    .body(AuthResponse.fromUser(user));
+                    .body(AuthResponse.builder()
+                            .id(user.id)
+                            .username(user.username)
+                            .token(jwtTokenUtils.generateAccessToken(user))
+                            .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build()
+                    );
 
        } catch(BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -53,7 +60,12 @@ public class AuthApi {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody CreateUserRequest request) {
         try {
-            AuthResponse response = AuthResponse.fromUser(userService.create(request));
+            User user = userService.create(request);
+            AuthResponse response = AuthResponse.builder()
+                    .id(user.id)
+                    .username(user.username)
+                    .token(jwtTokenUtils.generateAccessToken(user))
+                    .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build();
             return ResponseEntity.ok().body(response);
         } catch(ValidationException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -61,12 +73,25 @@ public class AuthApi {
 
     }
 
-    //TODO delete
-    @GetMapping("/api/public/user")
-    public ResponseEntity<Iterable<User>> user() {
-        return  ResponseEntity.ok().body(
-                userService.getAllUser()
-        );
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest request) {
+
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    refreshTokenService.deleteByUserId(user.id); // delete old token
+                    return ResponseEntity.ok(AuthResponse.builder()
+                            .id(user.id)
+                            .username(user.username)
+                            .token(jwtTokenUtils.generateAccessToken(user))
+                            .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build());
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
 
     }
 
