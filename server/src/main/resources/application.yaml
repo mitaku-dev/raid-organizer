@@ -1,0 +1,39 @@
+spring:
+    security:
+        user:
+            password: "1234"
+        oauth2:
+            client:
+                registration:
+                    discord:
+                        client-id: 946035406091210802
+                        client-secret: Ky_a4C0sss-w3mitEmuWJnvFUA-mfr7r
+                        clientAuthenticationMethod: post
+                        authorizationGrantType: authorization_code
+                        scope:
+                            - identify
+                            - email
+                        redirectUri: "{baseUrl}/login/oauth2/code/discord"
+                        clientName: RaidOrganizer
+                provider:
+                    discord:
+                        authorizationUri: https://discordapp.com/api/oauth2/authorize
+                        tokenUri: https://discordapp.com/api/oauth2/token
+                        userInfoUri: https://discordapp.com/api/users/@me
+                        usernameAttribute: username
+    liquibase:
+        change-log: classpath:db/changelog/master.yaml
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+    datasource:
+        url: jdbc:h2:mem:testdb
+        driver-class-name: org.h2.Driver
+        username: fa
+        password: fa
+
+
+jwt:
+    secret: "zdtasdasd4324s(/&/sd"
+    expiration: 3600000
+    refreshExpiration: 604800000
