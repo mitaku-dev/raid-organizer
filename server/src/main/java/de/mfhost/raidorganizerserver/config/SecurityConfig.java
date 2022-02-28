@@ -1,8 +1,12 @@
 package de.mfhost.raidorganizerserver.config;
 
 import de.mfhost.raidorganizerserver.security.JwtTokenFilter;
+import de.mfhost.raidorganizerserver.security.oauth2.CustomOAuth2User;
+import de.mfhost.raidorganizerserver.security.oauth2.OAuth2LoginSucessHandeler;
+import de.mfhost.raidorganizerserver.security.oauth2.OAuth2UserService;
 import de.mfhost.raidorganizerserver.user.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,6 +17,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,16 +30,15 @@ import javax.servlet.http.HttpServletResponse;
 import static java.lang.String.format;
 
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepo;
     private final JwtTokenFilter jwtTokenFilter;
 
+    private final OAuth2UserService oAuth2UserService;
+    private final OAuth2LoginSucessHandeler loginSucessHandeler;
 
-    public SecurityConfig(UserRepository userRepo, JwtTokenFilter jwtTokenFilter) {
-        this.userRepo = userRepo;
-        this.jwtTokenFilter = jwtTokenFilter;
-    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -56,6 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
+
+
+
         http = http.exceptionHandling().authenticationEntryPoint(
                 (request, response, authException) -> {
                     response.sendError(
@@ -65,14 +74,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 }
         ).and();
 
+
+
         http.authorizeRequests()
+                .antMatchers("/oauth2/**").permitAll()
+                .antMatchers("/login/**").permitAll()
                 .antMatchers("/api/public/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+        .and()
+        .oauth2Login()
+                .userInfoEndpoint()
+                .userService(oAuth2UserService)
+                .and()
+                .successHandler(loginSucessHandeler)
+                .failureHandler(failureHandler());
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
 
+    }
+
+    @Bean
+    SimpleUrlAuthenticationFailureHandler failureHandler() {
+        return new SimpleUrlAuthenticationFailureHandler();
     }
 
     @Bean
@@ -92,5 +117,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+
 
 }

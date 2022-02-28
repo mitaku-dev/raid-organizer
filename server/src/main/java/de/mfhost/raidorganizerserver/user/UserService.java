@@ -2,6 +2,7 @@ package de.mfhost.raidorganizerserver.user;
 
 
 import de.mfhost.raidorganizerserver.dto.CreateUserRequest;
+import de.mfhost.raidorganizerserver.security.AuthenticationProvider;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,6 +47,14 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public User createWithOAuth(String email, String name, AuthenticationProvider provider) {
+       User user = new User(name, email, provider);
+       return userRepository.save(user);
+    }
+
+    public void updateOAuth(User user, String name, AuthenticationProvider provider ) {
+        //TODO connect wth Discord
+    }
 
     public Iterable<User> getAllUser() {
         return userRepository.findAll();

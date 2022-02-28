@@ -1,6 +1,7 @@
 package de.mfhost.raidorganizerserver.user;
 
 import de.mfhost.raidorganizerserver.models.Job;
+import de.mfhost.raidorganizerserver.security.AuthenticationProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,20 +22,38 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long id;
-    public String username;
-    public String password;
+    private Long id;
+    private String username;
+    private String email;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private AuthenticationProvider auth_provider;
 
     @ElementCollection
-    public List<Job> jobs;
+    private List<Job> jobs;
 
-    public String lodestoneUrl;
-    public String fflogsUrl;
+
+
+
+    private String lodestoneUrl;
+    private String fflogsUrl;
 
 
     private boolean enabled = true;
 
     public User() {}
+
+
+    public User(String username, String email, AuthenticationProvider provider) {
+        this.username = username;
+        this.email = email;
+        this.auth_provider = provider;
+
+        this.jobs = new ArrayList<>();
+        this.enabled = true;
+
+    }
 
     @Builder
     public User(String username, String password) {

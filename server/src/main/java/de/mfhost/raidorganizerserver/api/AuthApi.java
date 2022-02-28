@@ -45,8 +45,8 @@ public class AuthApi {
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, jwtTokenUtils.generateAccessToken(user))
                     .body(AuthResponse.builder()
-                            .id(user.id)
-                            .username(user.username)
+                            .id(user.getId())
+                            .username(user.getUsername())
                             .token(jwtTokenUtils.generateAccessToken(user))
                             .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build()
                     );
@@ -62,8 +62,8 @@ public class AuthApi {
         try {
             User user = userService.create(request);
             AuthResponse response = AuthResponse.builder()
-                    .id(user.id)
-                    .username(user.username)
+                    .id(user.getId())
+                    .username(user.getUsername())
                     .token(jwtTokenUtils.generateAccessToken(user))
                     .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build();
             return ResponseEntity.ok().body(response);
@@ -83,10 +83,10 @@ public class AuthApi {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    refreshTokenService.deleteByUserId(user.id); // delete old token
+                    refreshTokenService.deleteByUserId(user.getId()); // delete old token
                     return ResponseEntity.ok(AuthResponse.builder()
-                            .id(user.id)
-                            .username(user.username)
+                            .id(user.getId())
+                            .username(user.getUsername())
                             .token(jwtTokenUtils.generateAccessToken(user))
                             .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build());
                 })
