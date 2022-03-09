@@ -5,6 +5,8 @@ import de.mfhost.raidorganizerserver.dto.AuthRequest;
 import de.mfhost.raidorganizerserver.dto.AuthResponse;
 import de.mfhost.raidorganizerserver.dto.CreateUserRequest;
 import de.mfhost.raidorganizerserver.security.*;
+import de.mfhost.raidorganizerserver.security.discord.AuthDiscordRequest;
+import de.mfhost.raidorganizerserver.security.discord.OAuth2Service;
 import de.mfhost.raidorganizerserver.user.User;
 import de.mfhost.raidorganizerserver.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,13 @@ public class AuthApi {
     private final JwtTokenUtils jwtTokenUtils;
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
+    private final OAuth2Service oAuth2Service;
+
+
+    @PostMapping(value="/loginWithDiscord")
+    public ResponseEntity<AuthResponse> loginWithDiscord(@RequestBody AuthDisscordRequest request) {
+        oAuth2Service.loginWithDiscord(request);
+    }
 
     @PostMapping(value = "/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) { try {
