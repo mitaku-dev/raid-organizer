@@ -7,6 +7,7 @@ import de.mfhost.raidorganizerserver.dto.CreateUserRequest;
 import de.mfhost.raidorganizerserver.security.*;
 import de.mfhost.raidorganizerserver.security.discord.AuthDiscordRequest;
 import de.mfhost.raidorganizerserver.security.discord.OAuth2Service;
+import de.mfhost.raidorganizerserver.security.discord.OAuth2ServiceException;
 import de.mfhost.raidorganizerserver.user.User;
 import de.mfhost.raidorganizerserver.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +36,12 @@ public class AuthApi {
     private final OAuth2Service oAuth2Service;
 
 
-    @PostMapping(value="/loginWithDiscord")
-    public ResponseEntity<AuthResponse> loginWithDiscord(@RequestBody AuthDisscordRequest request) {
-        oAuth2Service.loginWithDiscord(request);
+    @PostMapping(value="/login/discord")
+    public ResponseEntity<AuthResponse> loginWithDiscord(@RequestBody AuthDiscordRequest request) throws OAuth2ServiceException {
+        AuthResponse data = oAuth2Service.loginWithDiscord(request);
+
+
+        return ResponseEntity.ok(data);
     }
 
     @PostMapping(value = "/login")
