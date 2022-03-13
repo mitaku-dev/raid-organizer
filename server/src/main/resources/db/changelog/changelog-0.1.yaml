@@ -22,3 +22,6 @@ databaseChangeLog:
               - column:
                   name: auth_provider
                   type: varchar(15)
+              - column:
+                  name: profilePicUrl
+                  type: varchar(255)

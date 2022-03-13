@@ -2,6 +2,7 @@ package de.mfhost.raidorganizerserver.user;
 
 import de.mfhost.raidorganizerserver.models.Job;
 import de.mfhost.raidorganizerserver.security.AuthenticationProvider;
+import de.mfhost.raidorganizerserver.security.RefreshToken;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode
 @Table(name="users")
+@Builder
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -26,15 +29,13 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
+    private String profilePicUrl;
 
     @Enumerated(EnumType.STRING)
     private AuthenticationProvider auth_provider;
 
     @ElementCollection
     private List<Job> jobs;
-
-
-
 
     private String lodestoneUrl;
     private String fflogsUrl;

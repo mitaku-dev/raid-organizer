@@ -1,11 +1,27 @@
 import 'package:client/constants.dart';
+import 'package:client/controller/auth_provider.dart';
+import 'package:client/controller/menu_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/src/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+import 'home_screen.dart';
+
+class LoginScreen extends StatefulWidget {
 
   static const String route = "login";
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _usernameController = TextEditingController();
+
+  final _passwordController = TextEditingController();
+
+  var _loginError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +36,24 @@ class LoginScreen extends StatelessWidget {
                     children: [
                       Text("LOGIN", style: Theme.of(context).textTheme.headline1),
                       Text("Please enter your login and password", style: Theme.of(context).textTheme.headline6),
-                      SizedBox(height: 60),
-                      const RoundInput(hintText: "Email", icon: Icons.email),
-                      SizedBox(height: defaultPadding),
-                      const RoundInputPassword(hintText: "Password", icon: Icons.password),
-                      SizedBox(height: defaultPadding),
+                      const SizedBox(height: 60),
+
+                      //TODO animate
+                      Visibility(
+                          visible: _loginError,
+                          child: const Text(
+                            "Password or username is incorrect",
+                            style: TextStyle(
+                                color: Colors.red
+                            ),
+                          )
+                      ),
+                      SizedBox(height: 10,),
+                      RoundInput(hintText: "Email", icon: Icons.email, controller: _usernameController),
+                      const SizedBox(height: defaultPadding),
+                      RoundInputPassword(hintText: "Password", icon: Icons.password, controller: _passwordController),
+                      const SizedBox(height: defaultPadding),
+
                       //TODO forgot passiwr
                       TextButton(
                           onPressed: (){},
@@ -36,13 +65,11 @@ class LoginScreen extends StatelessWidget {
                             ),
                           )
                       ),
-                      SizedBox(height: defaultPadding),
+                      const SizedBox(height: defaultPadding),
                       SizedBox(
                         width: 300,
                         child: ElevatedButton(
-                            onPressed: () {
-                              //TODO
-                            },
+                            onPressed: () => _login(context),
                             child: Padding(
                                 padding: EdgeInsets.all(defaultPadding),
                                 child: Text("Login", style: Theme.of(context).textTheme.button)
@@ -64,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                         width: 300,
                         child: ElevatedButton(
                             onPressed: () {
-                              //TODO
+                              Navigator.of(context).pushNamed("register");
                             },
                             child: Padding(
                                 padding: EdgeInsets.all(defaultPadding),
@@ -93,6 +120,23 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
+  _login(BuildContext context) async {
+    setState(() {
+      _loginError = false;
+    });
+
+    bool sucess = await context.read<AuthProvider>().login(_usernameController.value.text, _passwordController.value.text);
+    if(!sucess) {
+      setState(() {
+        _loginError = true;
+      });
+    }else {
+      context.read<MenuController>().pushNamed(HomeScreen.route);
+    }
+    //TODO on error
+    _usernameController.clear();
+    _passwordController.clear();
+  }
 
   _loginWithDiscord()  async{
     // Present the dialog to the user
@@ -104,17 +148,18 @@ class LoginScreen extends StatelessWidget {
 // Extract token from resulting url
     final token = Uri.parse(result).queryParameters['token'];
   }
-
 }
 
 class RoundInput extends StatelessWidget {
 
   final String hintText;
   final IconData? icon;
+  final TextEditingController? controller;
 
   const RoundInput({
     required this.hintText,
     this.icon,
+    this.controller
   });
 
 
@@ -123,6 +168,7 @@ class RoundInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         prefixIcon: icon  != null ?  Icon(icon, color: Colors.white54) : null,
         suffixIcon: const Icon(Icons.visibility, color: Colors.transparent),
@@ -186,10 +232,12 @@ class RoundInputPassword extends StatefulWidget {
 
   final String hintText;
   final IconData? icon;
+  final TextEditingController? controller;
 
   const RoundInputPassword({
     required this.hintText,
     this.icon,
+    this.controller,
   });
 
   @override
@@ -210,6 +258,7 @@ class RoundInputPasswordState extends State<RoundInputPassword> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: widget.controller,
       obscureText: !_passwordVisible,
       decoration: InputDecoration(
         prefixIcon: widget.icon  != null ?  Icon(widget.icon, color: Colors.white54) : null,

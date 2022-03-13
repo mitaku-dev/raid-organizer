@@ -8,6 +8,7 @@ import de.mfhost.raidorganizerserver.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -40,6 +42,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2LoginSucessHandeler loginSucessHandeler;
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -59,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
+        http = http.cors().and().csrf().disable();
 
 
         http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
@@ -76,12 +84,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         ).and();
 
 
-
         http.authorizeRequests()
                 .antMatchers("/oauth2/**").permitAll()
-                .antMatchers("/login/**").permitAll()
+                .antMatchers("auth/login/**").permitAll()
                 .antMatchers("/api/public/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/images/**").permitAll()
+                .antMatchers("/console").permitAll()
                 .anyRequest().authenticated()
         .and()
         .oauth2Login()
@@ -106,7 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+        //config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");

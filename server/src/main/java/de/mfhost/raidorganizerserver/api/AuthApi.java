@@ -60,6 +60,7 @@ public class AuthApi {
                     .body(AuthResponse.builder()
                             .id(user.getId())
                             .username(user.getUsername())
+                            .profilePicUrl(user.getProfilePicUrl())
                             .token(jwtTokenUtils.generateAccessToken(user))
                             .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build()
                     );
@@ -72,11 +73,13 @@ public class AuthApi {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody CreateUserRequest request) {
+
         try {
             User user = userService.create(request);
             AuthResponse response = AuthResponse.builder()
                     .id(user.getId())
                     .username(user.getUsername())
+                    .profilePicUrl(user.getProfilePicUrl())
                     .token(jwtTokenUtils.generateAccessToken(user))
                     .refreshToken(refreshTokenService.createRefreshToken(user).getToken()).build();
             return ResponseEntity.ok().body(response);

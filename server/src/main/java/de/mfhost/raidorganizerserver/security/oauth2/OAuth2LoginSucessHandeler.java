@@ -15,12 +15,15 @@ import java.io.IOException;
 
 
 @Component
-@RequiredArgsConstructor
+
 public class OAuth2LoginSucessHandeler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final OAuth2Service oAuth2Service;
+    private OAuth2Service oAuth2Service;
 
-
+    //TODO?
+    public void setoAuth2Service(OAuth2Service oAuth2Service){
+        this.oAuth2Service = oAuth2Service;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -35,8 +38,6 @@ public class OAuth2LoginSucessHandeler extends SimpleUrlAuthenticationSuccessHan
 
         response.setHeader("token",authResponse.getToken());
         response.setHeader("refresh_token",authResponse.getRefreshToken());
-
-
 
 
         super.onAuthenticationSuccess(request,response, authentication);

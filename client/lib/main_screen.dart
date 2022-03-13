@@ -1,3 +1,4 @@
+import 'package:client/components/profile_card.dart';
 import 'package:client/components/side_menu.dart';
 import 'package:client/constants.dart';
 import 'package:client/utils/responsive.dart';
@@ -23,30 +24,36 @@ class MainScreen extends StatelessWidget {
       key: context.read<MenuController>().scaffoldKey,
       drawer: SideMenu(),
       body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            if(Responsive.isDesktop(context))
-              Expanded(
-                child: SideMenu()
-              ),
-            Expanded(
-              flex: 5,
-              child: Column(
-                    children: [
-                        Padding(
-                            padding: EdgeInsets.all(defaultPadding),
-                            child: Header()
-                        ),
-                      Expanded(
-                        child:  Padding(
-                            padding: EdgeInsets.all(defaultPadding),
-                            child: child)
-                        ,
-                      )
-                    ],
-                )
-              )
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if(Responsive.isDesktop(context))
+                  Expanded(
+                    child: SideMenu()
+                  ),
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                        children: [
+                            Padding(
+                                padding: EdgeInsets.all(defaultPadding),
+                                child: Header()
+                            ),
+                          Expanded(
+                            child:  Padding(
+                                padding: EdgeInsets.all(defaultPadding),
+                                child:  child
+                            )
+                            ,
+                          )
+                        ],
+                    )
+                  )
+              ],
+            ),
+            ProfileCard(),
           ],
         )
       )
