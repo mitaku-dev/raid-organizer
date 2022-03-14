@@ -1,5 +1,6 @@
 package de.mfhost.raidorganizerserver.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mfhost.raidorganizerserver.models.Job;
 import de.mfhost.raidorganizerserver.security.AuthenticationProvider;
 import de.mfhost.raidorganizerserver.security.RefreshToken;
@@ -28,6 +29,8 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     private String email;
+
+    @JsonIgnore
     private String password;
     private String profilePicUrl;
 
@@ -40,7 +43,7 @@ public class User implements UserDetails {
     private String lodestoneUrl;
     private String fflogsUrl;
 
-
+    @JsonIgnore
     private boolean enabled = true;
 
     public User() {}

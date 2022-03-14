@@ -1,7 +1,9 @@
 package de.mfhost.raidorganizerserver.api;
 
 import de.mfhost.raidorganizerserver.models.Image;
+import de.mfhost.raidorganizerserver.models.Static;
 import de.mfhost.raidorganizerserver.repository.ImageRepository;
+import de.mfhost.raidorganizerserver.repository.StaticRepository;
 import de.mfhost.raidorganizerserver.user.User;
 import de.mfhost.raidorganizerserver.user.UserRepository;
 import de.mfhost.raidorganizerserver.utils.ImageUtility;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -24,14 +27,17 @@ public class ImageApi {
 
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
+    private final StaticRepository staticRepository;
 
-    public ImageApi(ImageRepository imageRepository, UserRepository userRepository) {
+    public ImageApi(ImageRepository imageRepository, UserRepository userRepository, StaticRepository staticRepository) {
         this.imageRepository = imageRepository;
         this.userRepository = userRepository;
+        this.staticRepository = staticRepository;
     }
 
 
-    @PostMapping
+    @PostMapping("/user")
+    @Transactional
     public ResponseEntity uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
 
         //TODO if over 10MB
@@ -70,6 +76,36 @@ public class ImageApi {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+
+    @PostMapping("/static/{id}")
+    @Transactional
+    public ResponseEntity uploadImageStatic(@RequestParam("image") MultipartFile file, @PathVariable Long id) throws IOException {
+
+        Static statics = staticRepository.findById(id).orElseThrow();
+
+        Image image = imageRepository.save(
+                Image.builder()
+                        .name(file.getOriginalFilename())
+                        .type(file.getContentType())
+                        .image(ImageUtility.compressImage(file.getBytes())).build()
+        );
+
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+        if(url.equals("http://localhost:8080")) { //TODO only dev
+            url = "http://192.168.178.75:8080";
+        }
+
+        url += "/images/"+image.getId();
+
+        statics.setStaticImageUrl(url);
+        staticRepository.save(statics);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
 
 
     @GetMapping("/{id}")

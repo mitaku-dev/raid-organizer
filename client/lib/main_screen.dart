@@ -22,7 +22,7 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: context.read<MenuController>().scaffoldKey,
-      drawer: SideMenu(),
+      drawer: Responsive.isDesktop(context) ? null : SideMenu(),
       body: SafeArea(
         child: Stack(
           children: [

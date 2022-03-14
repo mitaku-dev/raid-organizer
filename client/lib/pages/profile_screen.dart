@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:client/components/password_input.dart';
 import 'package:client/controller/auth_provider.dart';
 import 'package:client/model/user.dart';
+import 'package:client/service/http_service.dart';
 import 'package:client/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
 
     return FutureBuilder(
-      future: context.read<AuthProvider>().me(),
+      future: HttpService().me(),
       builder: (context, AsyncSnapshot<User?> snapshot) {
 
         _usernameController.text = snapshot.data?.username ?? "";
@@ -100,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   footer: ElevatedButton(onPressed: () async {
                     //TODO save image and username
                     if(profileImagePicked != null) {
-                      context.read<AuthProvider>().updateImage(profileImagePicked!);
+                      HttpService().updateImage(profileImagePicked!);
 
                     }
 
@@ -152,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   footer: ElevatedButton(onPressed: () async {
 
-                    int status = await context.read<AuthProvider>()
+                    int? status = await HttpService()
                         .changePassword(
                         _passwordController.value.text,
                         _newPasswordController.value.text
@@ -300,7 +301,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             onPressed: () {
 
                                                               if(_deleteController.value.text == "DELETE") {
-                                                                context.read<AuthProvider>().delete();
+                                                                HttpService().delete();
                                                                 var snackBar = SnackBar(
                                                                     content: Row(
                                                                       children: const [

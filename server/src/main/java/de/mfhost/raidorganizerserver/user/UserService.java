@@ -5,6 +5,7 @@ import de.mfhost.raidorganizerserver.dto.ChangePasswordRequest;
 import de.mfhost.raidorganizerserver.dto.CreateUserRequest;
 import de.mfhost.raidorganizerserver.security.AuthenticationProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -95,8 +96,12 @@ public class UserService implements UserDetailsService {
         //TODO connect wth Discord
     }
 
-    public Iterable<User> getAllUser() {
-        return userRepository.findAll();
+    public Iterable<User> getAllUser(String filter) {
+        User filte = User.builder()
+                .username(filter)
+                .build();
+        Specification<User> spec = new UserSpecification(filte);
+        return userRepository.findAll(spec);
     }
 
 }

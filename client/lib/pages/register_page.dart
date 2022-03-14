@@ -1,4 +1,6 @@
 import 'package:client/controller/auth_provider.dart';
+import 'package:client/model/user.dart';
+import 'package:client/service/http_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 
@@ -153,14 +155,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _register(BuildContext context) async {
 
-    bool success = await context.read<AuthProvider>().register(
+    User? user = await HttpService().register(
       _usernameController.value.text,
       _emailController.value.text,
       _passwordController.value.text,
       _password2Controller.value.text
     );
 
-    if(success) {
+    if(user != null) {
+      context.read<AuthProvider>().setUser(user);
       Navigator.of(context).pushNamed("home");
     }
 

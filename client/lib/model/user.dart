@@ -26,4 +26,8 @@ class User {
     );
   }
 
+  static List<User> listFromMap(Iterable json){
+    return List<User>.from(json.map((model) => User.fromMap(model)));
+  }
+
 }

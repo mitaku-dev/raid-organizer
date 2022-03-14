@@ -1,6 +1,8 @@
 import 'package:client/constants.dart';
 import 'package:client/controller/auth_provider.dart';
 import 'package:client/controller/menu_controller.dart';
+import 'package:client/model/user.dart';
+import 'package:client/service/http_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -125,17 +127,20 @@ class _LoginScreenState extends State<LoginScreen> {
       _loginError = false;
     });
 
-    bool sucess = await context.read<AuthProvider>().login(_usernameController.value.text, _passwordController.value.text);
-    if(!sucess) {
+    User? user = await HttpService().login(_usernameController.value.text, _passwordController.value.text);
+    if(user == null) {
       setState(() {
         _loginError = true;
       });
     }else {
+      context.read<AuthProvider>().setUser(user);
       context.read<MenuController>().pushNamed(HomeScreen.route);
     }
-    //TODO on error
+
     _usernameController.clear();
     _passwordController.clear();
+
+
   }
 
   _loginWithDiscord()  async{

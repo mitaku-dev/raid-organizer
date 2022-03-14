@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.websocket.server.PathParam;
 
 @Controller
 @RequestMapping("/user")
@@ -72,6 +73,10 @@ public class UserApi {
       return userService.changePassword(request);
     }
 
+    @GetMapping
+    public ResponseEntity<Iterable<User>> getAll(@PathParam("filter") String filter) {
+        return ResponseEntity.ok(userService.getAllUser(filter));
+    }
 
 
     //TODO change pw

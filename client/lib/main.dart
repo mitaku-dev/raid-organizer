@@ -6,6 +6,8 @@ import 'package:client/pages/home_screen.dart';
 import 'package:client/pages/login_screen.dart';
 import 'package:client/pages/profile_screen.dart';
 import 'package:client/pages/register_page.dart';
+import 'package:client/pages/static_screen.dart';
+import 'package:client/service/http_service.dart';
 import 'package:client/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +25,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    HttpService().init();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -43,15 +46,18 @@ class MyApp extends StatelessWidget {
           HomeScreen.route: (context) => HomeScreen(),
           ProfileScreen.route: (context) => ProfileScreen(),
           RegisterPage.route: (context) => RegisterPage(),
+          StaticScreen.route: (context) => StaticScreen(),
         },
-        builder: (context, child) => Overlay(
-          initialEntries: [
-            OverlayEntry(builder: (context) =>  MainScreen(child: child!))
-          ],
-        ),
-        // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      ),
+        builder: (context, child) {
+          return Overlay(
+            initialEntries: [
+              OverlayEntry(builder: (context) => MainScreen(child: child!))
+            ],
+          );
+        }  // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      )
     );
+
   }
 
 }

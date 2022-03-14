@@ -3,6 +3,7 @@ import 'package:client/controller/menu_controller.dart';
 import 'package:client/model/user.dart';
 import 'package:client/pages/login_screen.dart';
 import 'package:client/pages/profile_screen.dart';
+import 'package:client/service/http_service.dart';
 import 'package:client/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -103,7 +104,8 @@ class _ProfileCardState extends State<ProfileCard> {
           title: Text(user != null ? "Logout" : "Login"),
           onTap: () {
             if(user != null) {
-              context.read<AuthProvider>().logout();
+              HttpService().logout();
+              context.read<AuthProvider>().setUser(null);
             }
             context.read<MenuController>().pushNamed(LoginScreen.route);
             setState(() {

@@ -1,4 +1,8 @@
+import 'package:client/controller/menu_controller.dart';
+import 'package:client/pages/home_screen.dart';
+import 'package:client/pages/static_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 
 class SideMenu extends StatelessWidget {
   @override
@@ -12,12 +16,16 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Home",
             icon: Icons.home,
-            action: () {},
+            action: () {
+              context.read<MenuController>().pushNamed(HomeScreen.route);
+            },
           ),
           DrawerListTile(
             title: "Statics",
             icon: Icons.people,
-            action: () {},
+            action: () {
+              context.read<MenuController>().pushNamed(StaticScreen.route);
+            },
           ),
           DrawerListTile(
             title: "Forum",
