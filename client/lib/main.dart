@@ -6,13 +6,17 @@ import 'package:client/pages/home_screen.dart';
 import 'package:client/pages/login_screen.dart';
 import 'package:client/pages/profile_screen.dart';
 import 'package:client/pages/register_page.dart';
+import 'package:client/pages/static_overview.dart';
 import 'package:client/pages/static_screen.dart';
 import 'package:client/service/http_service.dart';
 import 'package:client/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:provider/provider.dart';
+import 'package:client/router.dart' as router;
 
 void main() {
+ // setUrlStrategy(PathUrlStrategy());
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
@@ -29,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => MenuController(navigator: _navigator),
+          create: (context) => CustomMenuController(navigator: _navigator),
         ),
         ChangeNotifierProvider(
           create: (context) => AuthProvider(),
@@ -47,6 +51,7 @@ class MyApp extends StatelessWidget {
           ProfileScreen.route: (context) => ProfileScreen(),
           RegisterPage.route: (context) => RegisterPage(),
           StaticScreen.route: (context) => StaticScreen(),
+          StaticOverview.route: (context) => StaticOverview(),
         },
         builder: (context, child) {
           return Overlay(

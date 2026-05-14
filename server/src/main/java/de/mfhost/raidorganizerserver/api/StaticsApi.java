@@ -1,7 +1,9 @@
 package de.mfhost.raidorganizerserver.api;
 
+import de.mfhost.raidorganizerserver.dto.MemberId;
 import de.mfhost.raidorganizerserver.dto.NewStaticRequest;
 import de.mfhost.raidorganizerserver.models.Application;
+import de.mfhost.raidorganizerserver.models.Member;
 import de.mfhost.raidorganizerserver.models.Static;
 import de.mfhost.raidorganizerserver.repository.StaticRepository;
 import de.mfhost.raidorganizerserver.service.PermissionService;
@@ -46,11 +48,19 @@ public class StaticsApi {
     }
 
     @PostMapping("/{id}/accept/{application_id}")
-    public ResponseEntity<?> apply(@PathVariable Long id, @PathVariable Long application_id) {
+    public ResponseEntity<?> accept(@PathVariable Long id, @PathVariable Long application_id) {
 
             staticService.acceptApplication(id, application_id);
         return  ResponseEntity.ok("");
     }
+
+    @PostMapping("/{id}/member")
+    public ResponseEntity<?> addMember(@PathVariable Long id, @RequestBody MemberId member) {
+        staticService.addMember(id, member);
+        return ResponseEntity.ok("");
+
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {

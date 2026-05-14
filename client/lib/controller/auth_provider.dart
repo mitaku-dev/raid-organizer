@@ -10,6 +10,8 @@ class AuthProvider extends ChangeNotifier {
   User? get user => _user;
 
 
+  
+
   //on init set User
   AuthProvider() {
     load();

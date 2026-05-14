@@ -39,8 +39,8 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: EdgeInsets.all(defaultPadding),
             child: Column(
               children: [
-                Text("REGISTER", style: Theme.of(context).textTheme.headline1),
-                Text("Create your new account", style: Theme.of(context).textTheme.headline6),
+                Text("REGISTER", style: Theme.of(context).textTheme.headlineLarge),
+                Text("Create your new account", style: Theme.of(context).textTheme.headlineLarge),
                 const SizedBox(height: 60),
                 const SizedBox(height: 10,),
                 TextField(
@@ -103,13 +103,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () => _register(context),
                       child: Padding(
                           padding: EdgeInsets.all(defaultPadding),
-                          child: Text("Register", style: Theme.of(context).textTheme.button)
+                          child: Text("Register", style: Theme.of(context).textTheme.labelLarge)
                       ),
-                      style:  ElevatedButton.styleFrom(shape : RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.lightGreen),
-                      ),
-                          primary: Colors.transparent
+                      style:  ElevatedButton.styleFrom(
+                          shape : RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.lightGreen),
+                      ), backgroundColor: Colors.transparent
                       )
                   ),
                 ),
@@ -132,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.keyboard_arrow_left),
-                              Text("Back to Login", style: Theme.of(context).textTheme.button),
+                              Text("Back to Login", style: Theme.of(context).textTheme.labelLarge),
                             ],
                           )
                       ),
@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(18.0),
                         side: BorderSide(color: Colors.red),
                       ),
-                          primary: Colors.transparent
+                          backgroundColor: Colors.transparent
                       )
                   ),
                 ),

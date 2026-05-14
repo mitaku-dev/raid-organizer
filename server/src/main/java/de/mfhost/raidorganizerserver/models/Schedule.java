@@ -22,5 +22,12 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Date dateTime;
+    private String day;
+
+    private int startHour;
+    private int startMinute;
+
+    private int  endHour;
+    private int  endMinute;
+
 }

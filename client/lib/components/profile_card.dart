@@ -93,7 +93,7 @@ class _ProfileCardState extends State<ProfileCard> {
           leading: Icon(Icons.person),
           title: Text("Profile"),
           onTap: () {
-            context.read<MenuController>().pushNamed(ProfileScreen.route);
+            context.read<CustomMenuController>().pushNamed(ProfileScreen.route);
             setState(() {
               _expanded = false;
             });
@@ -107,7 +107,7 @@ class _ProfileCardState extends State<ProfileCard> {
               HttpService().logout();
               context.read<AuthProvider>().setUser(null);
             }
-            context.read<MenuController>().pushNamed(LoginScreen.route);
+            context.read<CustomMenuController>().pushNamed(LoginScreen.route);
             setState(() {
               _expanded = false;
             });

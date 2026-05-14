@@ -15,12 +15,12 @@ class Header extends StatelessWidget {
         if(!Responsive.isDesktop(context))
           IconButton(
             icon: Icon(Icons.menu),
-            onPressed: context.read<MenuController>().controlMenu,
+            onPressed: context.read<CustomMenuController>().controlMenu,
           ),
         if(!Responsive.isMobile(context))
           Text(
             "RaidOrganizer",
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),

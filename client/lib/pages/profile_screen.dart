@@ -217,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: ElevatedButton(
                                 onPressed: () {},
                                 style:  ElevatedButton.styleFrom(
-                                  primary: Colors.orangeAccent,
+                                  backgroundColor: Colors.orangeAccent,
                                   shape : RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0),
                                   ),
@@ -293,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         height: 50,
                                                         child: ElevatedButton(
                                                             style: ElevatedButton.styleFrom(
-                                                              primary: Colors.red,
+                                                              backgroundColor: Colors.red,
                                                               shape : RoundedRectangleBorder(
                                                                 borderRadius: BorderRadius.circular(5.0),
                                                               ),
@@ -336,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                                 },
                                 style:  ElevatedButton.styleFrom(
-                                  primary: Colors.red,
+                                  backgroundColor: Colors.red,
                                   shape : RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0),
                                   ),
@@ -401,7 +401,7 @@ class ProfileSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.headline4),
+                Text(title, style: Theme.of(context).textTheme.headlineMedium),
                 Text(description),
               //  Expanded(child: Container(),)
               ],

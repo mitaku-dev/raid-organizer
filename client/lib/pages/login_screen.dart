@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.all(defaultPadding),
                 child: Column(
                     children: [
-                      Text("LOGIN", style: Theme.of(context).textTheme.headline1),
-                      Text("Please enter your login and password", style: Theme.of(context).textTheme.headline6),
+                      Text("LOGIN", style: Theme.of(context).textTheme.displayLarge),
+                      Text("Please enter your login and password", style: Theme.of(context).textTheme.titleLarge),
                       const SizedBox(height: 60),
 
                       //TODO animate
@@ -74,13 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () => _login(context),
                             child: Padding(
                                 padding: EdgeInsets.all(defaultPadding),
-                                child: Text("Login", style: Theme.of(context).textTheme.button)
+                                child: Text("Login", style: Theme.of(context).textTheme.labelLarge)
                             ),
                             style:  ElevatedButton.styleFrom(shape : RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
                               side: BorderSide(color: Colors.lightGreen),
                             ),
-                              primary: Colors.transparent
+                              backgroundColor: Colors.transparent
                             )
                           ),
                       ),
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Register", style: Theme.of(context).textTheme.button),
+                                    Text("Register", style: Theme.of(context).textTheme.labelLarge),
                                     Icon(Icons.arrow_right_alt)
                                   ],
                                 )
@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(18.0),
                               side: BorderSide(color: Colors.red),
                             ),
-                                primary: Colors.transparent
+                                backgroundColor: Colors.transparent
                             )
                         ),
                       ),
@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }else {
       context.read<AuthProvider>().setUser(user);
-      context.read<MenuController>().pushNamed(HomeScreen.route);
+      context.read<CustomMenuController>().pushNamed(HomeScreen.route);
     }
 
     _usernameController.clear();

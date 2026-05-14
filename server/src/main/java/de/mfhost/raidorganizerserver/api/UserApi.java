@@ -1,8 +1,11 @@
 package de.mfhost.raidorganizerserver.api;
 
 import de.mfhost.raidorganizerserver.dto.ChangePasswordRequest;
+import de.mfhost.raidorganizerserver.models.Static;
+import de.mfhost.raidorganizerserver.repository.StaticRepository;
 import de.mfhost.raidorganizerserver.security.RefreshToken;
 import de.mfhost.raidorganizerserver.security.RefreshTokenRepository;
+import de.mfhost.raidorganizerserver.service.StaticService;
 import de.mfhost.raidorganizerserver.user.User;
 import de.mfhost.raidorganizerserver.user.UserRepository;
 import de.mfhost.raidorganizerserver.user.UserService;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -23,6 +27,7 @@ public class UserApi {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final StaticService staticService;
     private final RefreshTokenRepository refreshTokenRepository;
 
 
@@ -40,6 +45,28 @@ public class UserApi {
         }
         return ResponseEntity.notFound().build();
     }
+
+
+    @GetMapping("/me/statics")
+    public ResponseEntity<Iterable<Static>> getMyStatics() {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        //TODO maybe only UserDetails??
+        if(principal instanceof User) {
+            Long userId = ((User) principal).getId();
+            User user = userRepository.findById(userId).orElseThrow();
+
+            Iterable<Static> statics = staticService.getStaticsOfUser(userId);
+
+            //TODO get statics
+
+            return ResponseEntity.ok(statics);
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {

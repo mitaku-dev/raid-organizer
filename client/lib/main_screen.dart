@@ -21,7 +21,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: context.read<MenuController>().scaffoldKey,
+      key: context.read<CustomMenuController>().scaffoldKey,
       drawer: Responsive.isDesktop(context) ? null : SideMenu(),
       body: SafeArea(
         child: Stack(

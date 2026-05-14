@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:client/controller/auth_provider.dart';
+import 'package:client/model/Schedule.dart';
+import 'package:client/model/member.dart';
 import 'package:client/model/static.dart';
 import 'package:client/model/user.dart';
 import 'package:dio/dio.dart';
@@ -10,13 +12,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HttpService {
 
+  static const MAX_RETRIES = 4;
+  static const BASE_URL = "http://localhost:8080";
+
   HttpService._internal()  {
     api.interceptors.add(InterceptorsWrapper(
       onError: (error, handler) async {
         if (error.response?.statusCode == 403 ||
             error.response?.statusCode == 401) {
           await refresh();
-          _retry(error.requestOptions);
+          _retry(error.requestOptions); //TODO limit to tries
         }
       },
       onRequest: (options, handler) async {
@@ -43,9 +48,9 @@ class HttpService {
 
   Dio api = Dio(
     BaseOptions(
-        connectTimeout: 5000,
-        receiveTimeout: 5000,
-        baseUrl: "http://192.168.178.75:8080"
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+        baseUrl: BASE_URL
     )
   );
 
@@ -57,7 +62,7 @@ class HttpService {
   Future<User?> login(String username, String password) async {
 
       Response response = await Dio().post(
-          "http://192.168.178.75:8080/auth/login",
+          "${BASE_URL}/auth/login",
           data: jsonEncode((<String,String>{
             'username': username,
             'password': password
@@ -98,6 +103,37 @@ class HttpService {
       return Future.value(null);
     }
   }
+
+
+  Future<bool> createStatic(String name, int id, XFile? image, List<Schedule> schedules) async {
+
+
+    if(name != "" && id != 0) {
+      Response response = await api.post(
+          "/static",
+          data: jsonEncode((<String,dynamic>{
+            "name" : name,
+            "leadId": id,
+            "schedules": Schedule.listToJson(schedules),
+          }))
+      );
+
+      if(response.statusCode == 200) {
+
+        int staticId = response.data['id'];
+        if(image != null) {
+          bool success = await updateStaticImage(staticId, image);
+          return Future.value(success);
+        }
+
+      }
+    }
+
+    return Future.value(false);
+    //todo refresh overview
+  }
+
+
 
   void logout() async {
     accessToken = "";
@@ -187,6 +223,34 @@ class HttpService {
   }
 
 
+  Future<bool> updateStaticImage(int id, XFile file) async {
+
+    MultipartFile netFile = await MultipartFile.fromBytes(
+      await file.readAsBytes(),
+      filename: file.name,
+      //contentType: MediaType.parse(file.mimeType!)
+    );
+
+    FormData formData = FormData.fromMap({
+      "image":
+      await netFile
+    });
+
+    Response response = await api.post(
+        "/images/static/"+id.toString(),
+        data: formData
+    );
+
+    if(response.statusCode == 200) {
+      return Future.value(true);
+    } else  {
+      return Future.value(false);
+    }
+
+  }
+
+
+
   Future<List<Static>> getStatics() async {
     Response response = await api.get("/static");
     if(response.statusCode == 200) {
@@ -197,6 +261,52 @@ class HttpService {
       return Future.value(null);
     }
   }
+
+  Future<List<Static>> getMyStatics() async {
+    Response response = await api.get("/user/me/statics");
+    if(response.statusCode == 200) {
+      Iterable json = response.data;
+      List<Static> statics = Static.listFromMap(json);
+      return Future.value(statics);
+    }else {
+      return Future.value(null);
+    }
+  }
+
+
+
+  Future<Static> getStatic(int staticId) async {
+    Response response = await api.get("/static/"+staticId.toString());
+    if(response.statusCode == 200) {
+      Map<String,dynamic> json = response.data;
+      Static static = Static.fromMap(json);
+      return Future.value(static);
+    }else {
+      return Future.value(null);
+    }
+  }
+
+
+
+
+  Future<void> addMember(int id, Member member) async {
+
+    Response response = await api.post(
+        "/static/"+id.toString()+"/member",
+        data: jsonEncode(member.toJson())
+    );
+
+    if(response.statusCode == 200) {
+      //Map<String,dynamic> json = response.data;
+
+
+      return Future.value();
+    } else  {
+      return Future.value(null);
+    }
+
+  }
+
 
 
 

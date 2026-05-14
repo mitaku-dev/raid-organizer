@@ -8,4 +8,8 @@ import java.util.Optional;
 
 public interface StaticRepository extends JpaRepository<Static,Long> {
 
+
+    Iterable<Static> findAllByMembersUserId(Long userId);
+    Iterable<Static> findAllByLeadId(Long leadId);
+
 }

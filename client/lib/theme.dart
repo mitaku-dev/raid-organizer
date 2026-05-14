@@ -39,8 +39,11 @@ mixin AppTheme {
           borderRadius: BorderRadius.circular(5.0),
           //side: BorderSide(color: Colors.lightGreen),
         ),
-        primary: highlightColor,
+        backgroundColor: highlightColor,
      )
+     ),
+     iconTheme: IconThemeData(
+       color: Colors.orange
      )
     );
 

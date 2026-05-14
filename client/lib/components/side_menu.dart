@@ -17,14 +17,14 @@ class SideMenu extends StatelessWidget {
             title: "Home",
             icon: Icons.home,
             action: () {
-              context.read<MenuController>().pushNamed(HomeScreen.route);
+              context.read<CustomMenuController>().pushNamed(HomeScreen.route);
             },
           ),
           DrawerListTile(
             title: "Statics",
             icon: Icons.people,
             action: () {
-              context.read<MenuController>().pushNamed(StaticScreen.route);
+              context.read<CustomMenuController>().pushNamed(StaticScreen.route);
             },
           ),
           DrawerListTile(

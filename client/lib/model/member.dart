@@ -1,4 +1,5 @@
 import 'package:client/model/user.dart';
+import 'package:flutter/material.dart';
 
 class Member {
   User? _user;
@@ -25,8 +26,33 @@ class Member {
     );
   }
 
+  Map<String,dynamic> toJson(){
+    return {
+      "job": job,
+      "userId": user?.id
+    };
+  }
+
   static List<Member> listFromMap(Iterable json){
     return List<Member>.from(json.map((model) => Member.fromMap(model)));
+  }
+
+  //TODO
+  Color getJobColor() {
+    switch(job) {
+      case "pld":
+      case "drk":
+      case "gnb":
+      case "war":
+        return Colors.blue;
+      case "whm":
+      case "ast":
+      case "sch":
+        return Colors.green;
+      default:
+        return Colors.red;
+
+    }
   }
 
 }

@@ -30,6 +30,7 @@ public class Static {
 
     private String staticImageUrl;
 
+    boolean publicVisible;
 
     @ManyToOne
     @JoinColumn(name = "lead_id", referencedColumnName = "id")
@@ -53,6 +54,16 @@ public class Static {
                         .build()
         );
     }
+
+    public void addMember(Member member) {
+        members.add(
+                Member.builder()
+                        .job(member.getJob())
+                        .user(member.getUser())
+                        .build()
+        );
+    }
+
 
     public void apply(Application application) {
         applications.add(application);
